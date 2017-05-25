@@ -8,6 +8,8 @@ var bodyParser = require('body-parser');
 var passport = require('passport');
 var flash = require('connect-flash');
 
+var config = require('./src/config');
+
 var index = require('./routes/index');
 var users = require('./routes/users');
 
@@ -56,5 +58,8 @@ app.use(function (err, req, res, next) {
 
 var initPassport = require('./src/init/passport');
 initPassport(passport);
+
+var initDatabase = require('./src/init/database');
+initDatabase(config.mariadb);
 
 module.exports = app;
