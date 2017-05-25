@@ -9,4 +9,12 @@ router.get('/login', function (req, res) {
     }
 });
 
+router.get('/join', function (req, res) {
+    if (req.isAuthenticated()) {
+        res.redirect('/');
+    } else {
+        res.render('join');
+    }
+});
+
 module.exports = router;
