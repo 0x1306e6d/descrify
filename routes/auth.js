@@ -14,7 +14,9 @@ router.get('/login', function (req, res) {
     if (req.isAuthenticated()) {
         res.redirect('/');
     } else {
-        res.render('login');
+        res.render('login', {
+            message: req.flash('loginMessage')
+        });
     }
 });
 
@@ -28,7 +30,9 @@ router.get('/join', function (req, res) {
     if (req.isAuthenticated()) {
         res.redirect('/');
     } else {
-        res.render('join');
+        res.render('join', {
+            message: req.flash('joinMessage')
+        });
     }
 });
 
