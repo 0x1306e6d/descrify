@@ -66,6 +66,6 @@ var initPassport = require('./src/init/passport');
 initPassport(passport);
 
 var initDatabase = require('./src/init/database');
-initDatabase(config.mariadb);
+initDatabase(config);
 
 module.exports = app;
