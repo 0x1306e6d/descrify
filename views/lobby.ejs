@@ -45,6 +45,21 @@
     </div>
 </div>
 
+<% if (games.length > 0) { %>
+<div class="container">
+    <div class="list-group">
+        <% for (var i = 0; i < games.length; i++) { %>
+        <% var id = games[i]._id %>
+        <% var title = games[i].title %>
+        <% var capacity = games[i].capacity %>
+        <a href="/game/<%= id %>" class="list-group-item">
+            <h3><%= title %></h3>
+        </a>
+        <% } %>
+    </div>
+</div>
+<% } %>
+
 <div id="create-game-modal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
