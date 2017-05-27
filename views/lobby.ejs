@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <% include common/meta.ejs %>
+    <% include common/css.ejs %>
+
+    <title>Descrify - 로비</title>
+
+    <link rel='stylesheet' href='/css/style.css'/>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <a href="/" class="navbar-brand">Descrify</a>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/profile">프로필</a></li>
+                <li><a href="/logout">로그아웃</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="jumbotron">
+    <div class="container">
+        <h1 class="text-center">Descrify</h1>
+        <br>
+        <div class="row">
+            <p class="col-lg-2 col-xs-8 col-lg-offset-4 col-xs-offset-2">
+                <a href="#" class="btn btn-red btn-block" role="button" data-toggle="modal"
+                   data-target="#create-game-modal">방 만들기</a>
+            </p>
+            <p class="col-lg-2 col-xs-8 col-lg-offset-0 col-xs-offset-2">
+                <a href="#" class="btn btn-red btn-block">빠른 시작</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div id="create-game-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="/game/create" method="post" class="form-horizontal">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title text-center">새로운 게임 생성</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="title" class="col-sm-2 control-label">방 제목</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="title" placeholder="제목">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="capacity" class="col-sm-2 control-label">총 인원</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" id="capacity">
+                                <option>4</option>
+                                <option>5</option>
+                                <option>6</option>
+                                <option>7</option>
+                                <option>8</option>
+                                <option>9</option>
+                                <option>10</option>
+                                <option>11</option>
+                                <option>12</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-default">방 만들기</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<% include common/js.ejs %>
+</body>
+</html>
