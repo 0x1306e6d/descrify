@@ -1,4 +1,5 @@
 var express = require('express');
+var Game = require('../src/database/game');
 var router = express.Router();
 
 router.post('/create', function (req, res) {
@@ -6,10 +7,16 @@ router.post('/create', function (req, res) {
         var title = req.body.title;
         var capacity = Number(req.body.capacity);
 
-        console.log("Request to create new game.");
-        console.dir(req.body);
+        Game.create(title, capacity, function (err, game) {
+            if (err) {
+                console.log("Failed to create game.");
+                console.error(err);
 
-        res.status(200).end();
+                res.status(500).end();
+            } else {
+                res.redirect('/game/' + game._id);
+            }
+        });
     } else {
         res.status(401).end();
     }
