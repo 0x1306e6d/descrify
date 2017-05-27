@@ -48,4 +48,16 @@ game.findAll = function (callback) {
     GameModel.find(callback);
 };
 
+game.find = function (id, callback) {
+    GameModel.findOne({
+        _id: id
+    }, 'title capacity create_time update_time', function (err, game) {
+        if (err) {
+            return callback(err);
+        } else {
+            return callback(null, game);
+        }
+    });
+};
+
 module.exports = game;

@@ -2,6 +2,36 @@ var express = require('express');
 var Game = require('../src/database/game');
 var router = express.Router();
 
+router.get('/:id', function (req, res) {
+    if (req.isAuthenticated()) {
+        var id = req.params.id;
+
+        Game.find(id, function (err, game) {
+            if (err) {
+                console.log("Failed to find a game. id: " + id);
+                console.error(err);
+
+                res.status(500).end();
+            } else if (!game) {
+                console.log("Request to non-existing game. id: " + id);
+
+                res.status(500).end();
+            } else {
+                console.dir(game);
+                res.render('game', {
+                    _id: game._id,
+                    title: game.title,
+                    capacity: game.capacity,
+                    create_time: game.create_time,
+                    update_tile: game.update_time
+                });
+            }
+        })
+    } else {
+        res.redirect('/auth/login');
+    }
+});
+
 router.post('/create', function (req, res) {
     if (req.isAuthenticated()) {
         var title = req.body.title;
