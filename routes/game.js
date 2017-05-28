@@ -44,6 +44,16 @@ router.post('/create', function (req, res) {
 
                 res.status(500).end();
             } else {
+                var io = req.app.locals.io;
+                var nsp = io.of('/' + game._id);
+                nsp.on('connection', function (socket) {
+                    console.log("on connection at game " + game._id);
+                    socket.join(game._id);
+
+                    socket.on('disconnect', function () {
+
+                    });
+                });
                 res.redirect('/game/' + game._id);
             }
         });

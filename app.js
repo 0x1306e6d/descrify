@@ -58,14 +58,7 @@ initDatabase(config);
 var server = http.createServer(app);
 var io = require('socket.io')(server);
 
-io.on('connection', function (socket) {
-    console.log("on connection.");
-
-    socket.on('disconnect', function () {
-        console.log('on disconnect');
-    });
-});
-
 app.locals.server = server;
+app.locals.io = io;
 
 module.exports = app;
