@@ -4,7 +4,7 @@
     <% include common/meta.ejs %>
     <% include common/css.ejs %>
 
-    <title><%= title %></title>
+    <title><%= game.title %></title>
 
     <link rel='stylesheet' href='/css/style.css'/>
 </head>
@@ -32,10 +32,14 @@
 <% include common/js.ejs %>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    var socket = io('/<%= _id %>');
-    socket.on('news', function (data) {
+    var socket = io('/game');
+    socket.on('hello', function (data) {
+        var username = data.username;
         console.log(data);
-        socket.emit('my other event', {my: 'data'});
+    });
+    socket.emit('enter', {
+        id: '<%= game.id %>',
+        username: '<%= user.username %>'
     });
 </script>
 </body>

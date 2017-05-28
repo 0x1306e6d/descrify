@@ -58,6 +58,20 @@ initDatabase(config);
 var server = http.createServer(app);
 var io = require('socket.io')(server);
 
+var game = io.of('/game');
+game.on('connection', function (socket) {
+    console.log("on connection at game");
+    socket.on('enter', function (data) {
+        var id = data.id;
+        var username = data.username;
+
+        socket.join(id);
+        socket.to(id).emit('hello', {
+            username: username
+        });
+    });
+});
+
 app.locals.server = server;
 app.locals.io = io;
 

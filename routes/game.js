@@ -17,13 +17,17 @@ router.get('/:id', function (req, res) {
 
                 res.status(500).end();
             } else {
-                console.dir(game);
                 res.render('game', {
-                    _id: game._id,
-                    title: game.title,
-                    capacity: game.capacity,
-                    create_time: game.create_time,
-                    update_tile: game.update_time
+                    game: {
+                        id: game._id,
+                        title: game.title,
+                        capacity: game.capacity,
+                        create_time: game.create_time,
+                        update_tile: game.update_time
+                    },
+                    user: {
+                        username: req.user.username
+                    }
                 });
             }
         })
@@ -44,16 +48,6 @@ router.post('/create', function (req, res) {
 
                 res.status(500).end();
             } else {
-                var io = req.app.locals.io;
-                var nsp = io.of('/' + game._id);
-                nsp.on('connection', function (socket) {
-                    console.log("on connection at game " + game._id);
-                    socket.join(game._id);
-
-                    socket.on('disconnect', function () {
-
-                    });
-                });
                 res.redirect('/game/' + game._id);
             }
         });
