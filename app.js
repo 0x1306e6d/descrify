@@ -58,18 +58,38 @@ initDatabase(config);
 var server = http.createServer(app);
 var io = require('socket.io')(server);
 
-var game = io.of('/game');
+game = io.of('/game');
 game.on('connection', function (socket) {
-    console.log("on connection at game");
+    socket.on('disconnect', function () {
+        console.log("on disconnect");
+        socket.broadcast.to(socket.game).emit('bye', {username: socket.username});
+    });
     socket.on('enter', function (data) {
+        console.log("on enter");
         var id = data.id;
         var username = data.username;
 
-        socket.join(id);
-        socket.to(id).emit('hello', {
-            username: username
-        });
+        socket.game = id;
+        socket.username = username;
+
+        socket.join(socket.game);
+        socket.broadcast.to(socket.game).emit('hello', {username: socket.username});
     });
+    socket.on('players', function () {
+        console.log("on players");
+
+        game.in(socket.game).clients(function (err, clients) {
+            var players = [];
+            clients.forEach(function (client) {
+                var player = game.connected[client];
+                players.push({
+                    username: player.username
+                });
+            });
+
+            socket.emit('players', {players: players});
+        });
+    })
 });
 
 app.locals.server = server;
