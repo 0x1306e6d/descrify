@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <% include common/meta.ejs %>
+    <% include common/css.ejs %>
+
+    <title><%= game.title %></title>
+
+    <link rel='stylesheet' href='/css/style.css'/>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <a href="/" class="navbar-brand">Descrify</a>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/profile">프로필</a></li>
+                <li><a href="/logout">로그아웃</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-offset-4 col-sm-4" id="alerts">
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+
+        </div>
+        <div class="col-sm-4">
+            <ul class="list-group" id="players">
+            </ul>
+        </div>
+    </div>
+</div>
+
+<% include common/js.ejs %>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io('/game');
+    socket.on('hello', function (data) {
+        var username = data.username;
+
+        $('#alerts').append("<div class=\"alert alert-warning alert-dismissible\" id=\"alert-hello-" + username + "\" role=\"alert\">" +
+            "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>" +
+            "<strong>" + username + "</strong> 님이 참가하였습니다." +
+            "</div>"
+        );
+        setTimeout(function () {
+            $('#alert-hello-' + username).alert('close');
+        }, 2000);
+
+        socket.emit('players');
+    });
+    socket.on('bye', function (data) {
+        var username = data.username;
+
+        $('#alerts').append("<div class=\"alert alert-danger alert-dismissible\" id=\"alert-bye-" + username + "\" role=\"alert\">" +
+            "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>" +
+            "<strong>" + username + "</strong> 님이 퇴장하였습니다." +
+            "</div>"
+        );
+        setTimeout(function () {
+            $('#alert-bye-' + username).alert('close');
+        }, 2000);
+
+        socket.emit('players');
+    });
+    socket.on('players', function (data) {
+        var $players = $('#players');
+        $players.empty();
+
+        var players = data.players;
+        players.forEach(function (player) {
+            $players.append("<li class='list-group-item'>" + player.username + "</li>");
+        });
+    });
+    socket.emit('enter', {
+        id: '<%= game.id %>',
+        username: '<%= user.username %>'
+    });
+
+    socket.emit('players');
+</script>
+</body>
+</html>
