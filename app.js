@@ -94,17 +94,14 @@ game.on('connection', function (socket) {
         });
     });
     socket.on('players', function () {
-        game.in(socket.game).clients(function (err, clients) {
-            var players = [];
+        GameModel.find(socket.game, function (err, game) {
+            if (err) {
+                console.log("Failed to get all players in game. gameId=" + socket.game);
+                console.error(err);
+                return;
+            }
 
-            clients.forEach(function (client) {
-                var player = game.connected[client];
-                players.push({
-                    username: player.username
-                });
-            });
-
-            socket.emit('players', {players: players});
+            socket.emit('players', {players: game.users});
         });
     })
 });
