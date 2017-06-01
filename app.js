@@ -58,28 +58,45 @@ initDatabase(config);
 var server = http.createServer(app);
 var io = require('socket.io')(server);
 
+var GameModel = require('./src/database/game');
 game = io.of('/game');
 game.on('connection', function (socket) {
     socket.on('disconnect', function () {
-        console.log("on disconnect");
-        socket.broadcast.to(socket.game).emit('bye', {username: socket.username});
+        GameModel.exit(socket.game, socket.username, function (err) {
+            if (err) {
+                console.log("Failed to exit game. gameId=" + socket.game + ", username=" + socket.username);
+                console.error(err);
+                return;
+            }
+
+            socket.broadcast.to(socket.game).emit('bye', {username: socket.username});
+            console.log("Client exit game. gameId=" + socket.game + ", username=" + socket.username);
+        });
     });
+
     socket.on('enter', function (data) {
-        console.log("on enter");
         var id = data.id;
         var username = data.username;
 
         socket.game = id;
         socket.username = username;
 
-        socket.join(socket.game);
-        socket.broadcast.to(socket.game).emit('hello', {username: socket.username});
+        GameModel.participate(socket.game, socket.username, function (err) {
+            if (err) {
+                console.log("Failed to participate in game. gameId=" + socket.game + ", username=" + socket.username);
+                console.error(err);
+                return;
+            }
+
+            socket.join(socket.game);
+            socket.broadcast.to(socket.game).emit('hello', {username: socket.username});
+            console.log("Client participate in game. gameId=" + socket.game + ", username=" + socket.username);
+        });
     });
     socket.on('players', function () {
-        console.log("on players");
-
         game.in(socket.game).clients(function (err, clients) {
             var players = [];
+
             clients.forEach(function (client) {
                 var player = game.connected[client];
                 players.push({

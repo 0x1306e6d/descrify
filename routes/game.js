@@ -22,6 +22,7 @@ router.get('/:id', function (req, res) {
                         id: game._id,
                         title: game.title,
                         ongoing: game.ongoing,
+                        size: game.size,
                         capacity: game.capacity,
                         create_time: game.create_time,
                         update_tile: game.update_time

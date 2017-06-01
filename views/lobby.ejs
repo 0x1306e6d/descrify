@@ -52,10 +52,12 @@
         <% var id = games[i]._id %>
         <% var title = games[i].title %>
         <% var ongoing = games[i].ongoing %>
+        <% var size = games[i].size %>
         <% var capacity = games[i].capacity %>
 
-        <% if (!ongoing) { %>
+        <% if (!ongoing && size && size < capacity) { %>
         <a href="/game/<%= id %>" class="list-group-item">
+            <span class="badge"><%= games[i].size %> / <%= games[i].capacity %></span>
             <h3><%= title %></h3>
         </a>
         <% } %>
