@@ -51,10 +51,15 @@
         <% for (var i = 0; i < games.length; i++) { %>
         <% var id = games[i]._id %>
         <% var title = games[i].title %>
+        <% var ongoing = games[i].ongoing %>
         <% var capacity = games[i].capacity %>
+
+        <% if (!ongoing) { %>
         <a href="/game/<%= id %>" class="list-group-item">
             <h3><%= title %></h3>
         </a>
+        <% } %>
+
         <% } %>
     </div>
 </div>

@@ -10,6 +10,7 @@ var GameModel;
 function init() {
     GameSchema = new Schema({
         title: {type: String},
+        ongoing: {type: Boolean, default: false},
         capacity: {type: Number, default: 4},
         create_time: {type: Date, default: Date.now},
         update_time: {type: Date, default: Date.now}
@@ -32,6 +33,7 @@ game.setup = function (config) {
 game.create = function (title, capacity, callback) {
     var game = new GameModel();
     game.title = title;
+    game.ongoing = false;
     game.capacity = capacity;
     game.create_time = Date.now();
     game.update_time = game.create_time;
@@ -51,7 +53,7 @@ game.findAll = function (callback) {
 game.find = function (id, callback) {
     GameModel.findOne({
         _id: id
-    }, 'title capacity create_time update_time', function (err, game) {
+    }, 'title ongoing, capacity create_time update_time', function (err, game) {
         if (err) {
             return callback(err);
         } else {
