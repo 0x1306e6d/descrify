@@ -1,5 +1,5 @@
 .btn-cool {
-    background: rgba(52, 152, 219, 1);
+    background: rgba(52, 73, 94, 1);
     color: rgba(255, 255, 255, 1);
     border: 2px solid rgba(255, 255, 255, 1);
     font-size: 14px;
@@ -8,10 +8,10 @@
 
 .btn-cool:hover {
     background: rgba(255, 255, 255, 1);
-    color: rgba(52, 152, 219, 1);
+    color: rgba(52, 73, 94, 1);
 }
 
 .btn-cool:active, .btn-cool:focus {
     background: rgba(255, 255, 255, 1);
-    color: rgba(52, 152, 219, 1);
+    color: rgba(52, 73, 94, 1);
 }
