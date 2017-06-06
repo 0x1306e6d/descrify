@@ -1,4 +1,4 @@
-.btn-cool {
+.btn-asphalt {
     background: rgba(52, 73, 94, 1);
     color: rgba(255, 255, 255, 1);
     border: 2px solid rgba(255, 255, 255, 1);
@@ -6,12 +6,12 @@
     font-weight: bold;
 }
 
-.btn-cool:hover {
+.btn-asphalt:hover {
     background: rgba(255, 255, 255, 1);
     color: rgba(52, 73, 94, 1);
 }
 
-.btn-cool:active, .btn-cool:focus {
+.btn-asphalt:active, .btn-asphalt:focus {
     background: rgba(255, 255, 255, 1);
     color: rgba(52, 73, 94, 1);
 }
