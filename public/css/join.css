@@ -1,0 +1,27 @@
+html,
+body {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(52, 73, 94, 1);
+    color: rgba(255, 255, 255, 1);
+}
+
+body {
+    padding-top: 64px;
+}
+
+form {
+    margin-bottom: 8px;
+}
+
+.join-brand {
+    font-size: 32px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 1);
+}
+
+.join-brand:hover,
+.join-brand:focus {
+    text-decoration: none;
+    color: rgba(255, 255, 255, 1);
+}

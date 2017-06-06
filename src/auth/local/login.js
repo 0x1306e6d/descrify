@@ -58,7 +58,7 @@ module.exports = new LocalStrategy({
 
             return done(null, user);
         } else {
-            return done(null, false, req.flash('loginMessage', "로그인을 실패하였습니다."));
+            return done(null, false, req.flash('loginMessage', "계정이 존재하지 않거나 비밀번호가 틀렸습니다."));
         }
     })
 });

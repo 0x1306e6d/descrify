@@ -1,0 +1,34 @@
+html,
+body {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(52, 73, 94, 1);
+    color: rgba(255, 255, 255, 1);
+}
+
+.intro-wrapper {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    max-height: 100%;
+    display: table;
+}
+
+.intro {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.intro h1 {
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.intro p {
+    font-size: 24px;
+}
+
+.intro .btn {
+    margin: 32px;
+    padding: 8px 16px;
+}
