@@ -4,9 +4,9 @@
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('descrify:server');
-var http = require('http');
+const app = require('../app');
+const debug = require('debug')('descrify:server');
+const http = require('http');
 
 /**
  * Get port from environment and store in Express.
@@ -19,7 +19,8 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = app.locals.server;
+const server = http.createServer(app);
+const io = require('../io')(server);
 
 /**
  * Listen on provided port, on all network interfaces.

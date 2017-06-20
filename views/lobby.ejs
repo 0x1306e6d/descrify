@@ -6,10 +6,10 @@
 
     <title>Descrify - 로비</title>
 
-    <link rel='stylesheet' href='/css/style.css'/>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<nav class="navbar navbar-default navbar-static-top" role="navigation">
+<nav class="navbar navbar-asphalt navbar-static-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
             <a href="/" class="navbar-brand">Descrify</a>
@@ -23,31 +23,31 @@
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/profile">프로필</a></li>
-                <li><a href="/logout">로그아웃</a></li>
+                <li><a href="/auth/logout">로그아웃</a></li>
             </ul>
         </div>
     </div>
 </nav>
 
-<div class="jumbotron">
+<div class="jumbotron jumbotron-asphalt">
     <div class="container">
         <h1 class="text-center">Descrify</h1>
         <br>
         <div class="row">
-            <p class="col-lg-2 col-xs-8 col-lg-offset-4 col-xs-offset-2">
-                <a href="#" class="btn btn-red btn-block" role="button" data-toggle="modal"
+            <div class="col-lg-2 col-xs-8 col-lg-offset-4 col-xs-offset-2">
+                <a href="#" class="btn btn-asphalt btn-block" role="button" data-toggle="modal"
                    data-target="#create-game-modal">방 만들기</a>
-            </p>
-            <p class="col-lg-2 col-xs-8 col-lg-offset-0 col-xs-offset-2">
-                <a href="#" class="btn btn-red btn-block">빠른 시작</a>
-            </p>
+            </div>
+            <div class="col-lg-2 col-xs-8 col-lg-offset-0 col-xs-offset-2">
+                <a href="#" class="btn btn-asphalt btn-block" role="button">빠른 시작</a>
+            </div>
         </div>
     </div>
 </div>
 
-<% if (games.length > 0) { %>
 <div class="container">
     <div class="list-group">
+        <% if (games.length > 0) { %>
         <% for (var i = 0; i < games.length; i++) { %>
         <% var id = games[i]._id %>
         <% var title = games[i].title %>
@@ -57,15 +57,33 @@
 
         <% if (!ongoing && size && size < capacity) { %>
         <a href="/game/<%= id %>" class="list-group-item">
-            <span class="badge"><%= games[i].size %> / <%= games[i].capacity %></span>
-            <h3><%= title %></h3>
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-2">
+                        <h3 class="text-center">
+                            <!-- TODO: 게임 중 / 대기 중 구분 -->
+                            <% if (title.length == 5) { %>
+                            <span class="glyphicon glyphicon-fire"></span>
+                            <% } else { %>
+                            <span class="glyphicon glyphicon-hourglass"></span>
+                            <% } %>
+                        </h3>
+                    </div>
+                    <div class="col-xs-6">
+                        <h2 class="text-center"><%= title %></h2>
+                    </div>
+                    <div class="col-xs-4">
+                        <!-- TODO: 현재 접속 중인 유저 수 -->
+                        <h3 class="text-center">3 / <%= capacity %></h3>
+                    </div>
+                </div>
+            </div>
         </a>
         <% } %>
-
+        <% } %>
         <% } %>
     </div>
 </div>
-<% } %>
 
 <div id="create-game-modal" class="modal fade" role="dialog">
     <div class="modal-dialog">

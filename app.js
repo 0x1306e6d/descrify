@@ -1,4 +1,6 @@
 var express = require('express');
+var app = express();
+
 var http = require('http');
 var logger = require('morgan');
 var path = require('path');
@@ -10,14 +12,7 @@ var passport = require('passport');
 var flash = require('connect-flash');
 
 var config = require('./src/config');
-
-var index = require('./routes/index');
-var users = require('./routes/users');
-var auth = require('./routes/auth');
-var lobby = require('./routes/lobby');
-var game = require('./routes/game');
-
-var app = express();
+const controller = require('./routes/index');
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -37,12 +32,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-
-app.use('/', index);
-app.use('/users', users);
-app.use('/auth', auth);
-app.use('/lobby', lobby);
-app.use('/game', game);
+app.use(controller);
 
 var err404 = require('./err/404');
 var err = require('./err/err');
@@ -54,59 +44,5 @@ initPassport(passport);
 
 var initDatabase = require('./src/init/database');
 initDatabase(config);
-
-var server = http.createServer(app);
-var io = require('socket.io')(server);
-
-var GameModel = require('./src/database/game');
-game = io.of('/game');
-game.on('connection', function (socket) {
-    socket.on('disconnect', function () {
-        GameModel.exit(socket.game, socket.username, function (err) {
-            if (err) {
-                console.log("Failed to exit game. gameId=" + socket.game + ", username=" + socket.username);
-                console.error(err);
-                return;
-            }
-
-            socket.broadcast.to(socket.game).emit('bye', {username: socket.username});
-            console.log("Client exit game. gameId=" + socket.game + ", username=" + socket.username);
-        });
-    });
-
-    socket.on('enter', function (data) {
-        var id = data.id;
-        var username = data.username;
-
-        socket.game = id;
-        socket.username = username;
-
-        GameModel.participate(socket.game, socket.username, function (err) {
-            if (err) {
-                console.log("Failed to participate in game. gameId=" + socket.game + ", username=" + socket.username);
-                console.error(err);
-                return;
-            }
-
-            socket.join(socket.game);
-            socket.broadcast.to(socket.game).emit('hello', {username: socket.username});
-            console.log("Client participate in game. gameId=" + socket.game + ", username=" + socket.username);
-        });
-    });
-    socket.on('players', function () {
-        GameModel.find(socket.game, function (err, game) {
-            if (err) {
-                console.log("Failed to get all players in game. gameId=" + socket.game);
-                console.error(err);
-                return;
-            }
-
-            socket.emit('players', {players: game.users});
-        });
-    })
-});
-
-app.locals.server = server;
-app.locals.io = io;
 
 module.exports = app;

@@ -1,24 +1,19 @@
-var express = require('express');
-var Game = require('../src/database/game');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+
+const Game = require('../src/database/game');
 
 router.get('/', function (req, res) {
-    if (req.isAuthenticated()) {
-        Game.findAll(function (err, games) {
-            if (err) {
-                console.log("Failed to find all games");
-                console.error(err);
+    Game.findAll(function (err, games) {
+        if (err) {
+            console.error("Failed to find all games.", err);
+            return res.status(500).end();
+        }
 
-                res.status(500).end();
-            } else {
-                res.render('lobby', {
-                    games: games
-                });
-            }
+        res.render('lobby', {
+            games: games
         });
-    } else {
-        res.redirect('/auth/login');
-    }
+    });
 });
 
 module.exports = router;

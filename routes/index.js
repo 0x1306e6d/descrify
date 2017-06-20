@@ -1,13 +1,20 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-/* GET home page. */
-router.get('/', function (req, res, next) {
+const auth = require('./auth');
+const lobby = require('./lobby');
+const game = require('./game');
+
+router.use('/auth', auth);
+
+router.use(function (req, res, next) {
     if (req.isAuthenticated()) {
-        res.redirect('/lobby');
+        next();
     } else {
-        res.render('intro');
+        res.redirect('/auth/login');
     }
 });
+router.use('/', lobby);
+router.use('/game', game);
 
 module.exports = router;
