@@ -1,6 +1,5 @@
 const Game = require('./src/database/game');
 
-var io;
 var game;
 var lobby;
 
@@ -78,11 +77,19 @@ function onLobby(socket) {
 }
 
 module.exports = function (server) {
-    io = require('socket.io')(server);
+    var io = require('socket.io')(server);
 
     game = io.of('/game');
     game.on('connection', onGame);
 
     lobby = io.of('/lobby');
     lobby.on('connection', onLobby);
+    Game.registerMiddleware('save', function (game) {
+        lobby.emit('game-new', game);
+    });
+    Game.registerMiddleware('remove', function (game) {
+        lobby.emit('game-remove', game);
+    });
+
+    return io;
 };

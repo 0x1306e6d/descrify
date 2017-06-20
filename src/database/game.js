@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var game = {};
+var events = [];
 
 var database;
 var GameSchema;
@@ -17,6 +18,10 @@ function init() {
         create_time: {type: Date, default: Date.now},
         update_time: {type: Date, default: Date.now}
     });
+    var len = events.length;
+    for (var i = 0; i < len; i++) {
+        GameSchema.post(events[i].on, events[i].handler);
+    }
     console.log("GameSchema is initialized.");
 
     GameModel = mongoose.model("game", GameSchema);
@@ -118,6 +123,16 @@ game.exit = function (gameId, username, callback) {
             });
         }
     });
+};
+
+game.registerMiddleware = function (on, handler) {
+    events.push({
+        on: on,
+        handler: handler
+    });
+    if (GameSchema) {
+        GameSchema.post(on, handler);
+    }
 };
 
 module.exports = game;
