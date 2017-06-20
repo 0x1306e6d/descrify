@@ -51,7 +51,11 @@
         <% for (var i = 0; i < games.length; i++) { %>
         <% var id = games[i]._id %>
         <% var title = games[i].title %>
+        <% var ongoing = games[i].ongoing %>
+        <% var size = games[i].size %>
         <% var capacity = games[i].capacity %>
+
+        <% if (!ongoing && size && size < capacity) { %>
         <a href="/game/<%= id %>" class="list-group-item">
             <div class="container">
                 <div class="row">
@@ -75,6 +79,7 @@
                 </div>
             </div>
         </a>
+        <% } %>
         <% } %>
         <% } %>
     </div>
