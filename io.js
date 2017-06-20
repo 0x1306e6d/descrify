@@ -1,4 +1,4 @@
-const Game = require('./src/database/game');
+const Game = require('./app/models/game');
 
 var game;
 var lobby;
@@ -65,7 +65,7 @@ function onLobby(socket) {
     });
 
     socket.on('games', function () {
-        Game.findAll(function (err, games) {
+        Game.find(function (err, games) {
             if (err) {
                 console.error("Failed to find all games.", err);
                 return;
@@ -84,12 +84,13 @@ module.exports = function (server) {
 
     lobby = io.of('/lobby');
     lobby.on('connection', onLobby);
-    Game.registerMiddleware('save', function (game) {
+
+    Game.schema.statics.onCreate = function (game) {
         lobby.emit('game-new', game);
-    });
-    Game.registerMiddleware('remove', function (game) {
+    };
+    Game.schema.statics.onRemove = function (game) {
         lobby.emit('game-remove', game);
-    });
+    };
 
     return io;
 };

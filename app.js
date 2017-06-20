@@ -10,6 +10,7 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var passport = require('passport');
 var flash = require('connect-flash');
+const mongoose = require('mongoose');
 
 var config = require('./src/config');
 const controller = require('./routes/index');
@@ -38,6 +39,12 @@ var err404 = require('./err/404');
 var err = require('./err/err');
 app.use(err404);
 app.use(err);
+
+mongoose.connect(config.mongodb.url);
+mongoose.connection.once('open', function () {
+    console.log("mongoose 데이터베이스 연결이 성립되었습니다.");
+});
+mongoose.connection.on('error', console.error.bind(console, "mongoose Error : "));
 
 var initPassport = require('./src/init/passport');
 initPassport(passport);
