@@ -46,42 +46,8 @@
 </div>
 
 <div class="container">
-    <div class="list-group">
-        <% if (games.length > 0) { %>
-        <% for (var i = 0; i < games.length; i++) { %>
-        <% var id = games[i]._id %>
-        <% var title = games[i].title %>
-        <% var ongoing = games[i].ongoing %>
-        <% var size = games[i].size %>
-        <% var capacity = games[i].capacity %>
+    <div id="games" class="list-group">
 
-        <% if (!ongoing && size && size < capacity) { %>
-        <a href="/game/<%= id %>" class="list-group-item">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xs-2">
-                        <h3 class="text-center">
-                            <!-- TODO: 게임 중 / 대기 중 구분 -->
-                            <% if (title.length == 5) { %>
-                            <span class="glyphicon glyphicon-fire"></span>
-                            <% } else { %>
-                            <span class="glyphicon glyphicon-hourglass"></span>
-                            <% } %>
-                        </h3>
-                    </div>
-                    <div class="col-xs-6">
-                        <h2 class="text-center"><%= title %></h2>
-                    </div>
-                    <div class="col-xs-4">
-                        <!-- TODO: 현재 접속 중인 유저 수 -->
-                        <h3 class="text-center">3 / <%= capacity %></h3>
-                    </div>
-                </div>
-            </div>
-        </a>
-        <% } %>
-        <% } %>
-        <% } %>
     </div>
 </div>
 
@@ -127,5 +93,62 @@
 </div>
 
 <% include common/js.ejs %>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    function gameToHtml(game) {
+        var html = '<a id="game-' + game._id + '" href="/game/' + game._id + '" class="list-group-item">';
+        html += '<div class="container">';
+        html += '<div class="row">';
+
+        html += '<div class="col-xs-2"><h3 class="text-center">';
+        if (game.ongoing) {
+            html += '<span class="glyphicon glyphicon-fire">';
+        } else {
+            html += '<span class="glyphicon glyphicon-hourglass">';
+        }
+        html += '</h3></div>';
+
+        html += '<div class="col-xs-6">';
+        html += '<h2 class="text-center">' + game.title + '</h2>';
+        html += '</div>';
+
+        html += '<div class="col-xs-4"><h3 class="text-center">';
+        html += (game.size + ' / ' + game.capacity);
+        html += '</h3></div>';
+
+        html += '</div></div></a>';
+        return html;
+    }
+
+    var socket = io('/lobby');
+
+    socket.on('games', function (games) {
+        if (!games) {
+            return;
+        }
+
+        const $games = $('#games');
+        $games.empty();
+        var len = games.length;
+        for (var i = 0; i < len; i++) {
+            $games.append(gameToHtml(games[i]));
+        }
+    });
+    socket.on('game-new', function (game) {
+        if (!game) {
+            return;
+        }
+
+        $('#games').append(gameToHtml(game));
+    });
+    socket.on('game-remove', function (game) {
+        if (!game) {
+            return;
+        }
+
+    });
+
+    socket.emit('games');
+</script>
 </body>
 </html>

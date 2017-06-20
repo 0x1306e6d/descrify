@@ -1,7 +1,10 @@
-var game;
+const Game = require('./src/database/game');
 
-function onConnection(socket) {
-    console.log("[onConnection] username=" + socket.username);
+var game;
+var lobby;
+
+function onGame(socket) {
+    console.log("[onGame] username=" + socket.username);
 
     socket.on('disconnect', function () {
         console.log("[onDisconnect] username=" + socket.username);
@@ -54,9 +57,39 @@ function onConnection(socket) {
     });
 }
 
+function onLobby(socket) {
+    console.log("[onLobby] socket=" + socket);
+
+    socket.on('disconnect', function () {
+        console.log("[onDisconnect] socket=" + socket);
+    });
+
+    socket.on('games', function () {
+        Game.findAll(function (err, games) {
+            if (err) {
+                console.error("Failed to find all games.", err);
+                return;
+            }
+
+            socket.emit('games', games);
+        });
+    });
+}
+
 module.exports = function (server) {
-    const io = require('socket.io')(server);
+    var io = require('socket.io')(server);
 
     game = io.of('/game');
-    game.on('connection', onConnection);
+    game.on('connection', onGame);
+
+    lobby = io.of('/lobby');
+    lobby.on('connection', onLobby);
+    Game.registerMiddleware('save', function (game) {
+        lobby.emit('game-new', game);
+    });
+    Game.registerMiddleware('remove', function (game) {
+        lobby.emit('game-remove', game);
+    });
+
+    return io;
 };
