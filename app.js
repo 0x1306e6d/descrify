@@ -1,4 +1,6 @@
 var express = require('express');
+var app = express();
+
 var http = require('http');
 var logger = require('morgan');
 var path = require('path');
@@ -10,14 +12,7 @@ var passport = require('passport');
 var flash = require('connect-flash');
 
 var config = require('./src/config');
-
-var index = require('./routes/index');
-var users = require('./routes/users');
-var auth = require('./routes/auth');
-var lobby = require('./routes/lobby');
-var game = require('./routes/game');
-
-var app = express();
+const controller = require('./routes/index');
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -37,12 +32,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-
-app.use('/', index);
-app.use('/users', users);
-app.use('/auth', auth);
-app.use('/lobby', lobby);
-app.use('/game', game);
+app.use(controller);
 
 var err404 = require('./err/404');
 var err = require('./err/err');

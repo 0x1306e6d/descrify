@@ -1,59 +1,48 @@
-var express = require('express');
-var Game = require('../src/database/game');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+
+const Game = require('../src/database/game');
 
 router.get('/:id', function (req, res) {
-    if (req.isAuthenticated()) {
-        var id = req.params.id;
+    var id = req.params.id;
+    Game.find(id, function (err, game) {
+        if (err) {
+            console.error("Failed to find game. id=" + id, err);
+            return res.status(500).end();
+        }
 
-        Game.find(id, function (err, game) {
-            if (err) {
-                console.log("Failed to find a game. id: " + id);
-                console.error(err);
+        if (!game) {
+            console.error("Request to non-existing game. id=" + id);
+            return res.status(500).end();
+        }
 
-                res.status(500).end();
-            } else if (!game) {
-                console.log("Request to non-existing game. id: " + id);
-
-                res.status(500).end();
-            } else {
-                res.render('game', {
-                    game: {
-                        id: game._id,
-                        title: game.title,
-                        capacity: game.capacity,
-                        create_time: game.create_time,
-                        update_tile: game.update_time
-                    },
-                    user: {
-                        username: req.user.username
-                    }
-                });
+        res.render('game', {
+            game: {
+                id: game._id,
+                title: game.title,
+                capacity: game.capacity,
+                create_time: game.create_time,
+                update_tile: game.update_time
+            },
+            user: {
+                username: req.user.username
             }
-        })
-    } else {
-        res.redirect('/auth/login');
-    }
+        });
+    });
 });
 
 router.post('/create', function (req, res) {
-    if (req.isAuthenticated()) {
-        var title = req.body.title;
-        var capacity = Number(req.body.capacity);
+    var title = req.body.title;
+    var capacity = Number(req.body.capacity);
 
-        Game.create(title, capacity, function (err, game) {
-            if (err) {
-                console.log("Failed to create game.");
-                console.error(err);
+    Game.create(title, capacity, function (err, game) {
+        if (err) {
+            console.error("Failed to create game. title=" + title + ", capacity=" + capacity, err);
+            return res.status(500).end();
+        }
 
-                res.status(500).end();
-            } else {
-                res.redirect('/game/' + game._id);
-            }
-        });
-    } else {
-        res.status(401).end();
-    }
+        res.redirect('/game/' + game._id);
+    });
 });
 
 module.exports = router;
