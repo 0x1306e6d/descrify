@@ -4,21 +4,31 @@ var game;
 var lobby;
 
 function onGame(socket) {
-    console.log("[onGame] username=" + socket.username);
-
     socket.on('disconnect', function () {
-        console.log("[onDisconnect] username=" + socket.username);
-
-        socket.broadcast
-            .to(socket.game)
+        socket.leave(socket.game);
+        socket.to(socket.game)
             .emit('bye', {
                 username: socket.username
             });
+
+        Game.findById(socket.game, function (err, game) {
+                if (err) {
+                    console.error("게임을 찾을 수 없습니다. id=" + socket.game, err);
+                    return;
+                }
+                game.exit(socket.username, function (err, game) {
+                    if (err) {
+                        console.error("게임 퇴장을 실패하였습니다.", err);
+                        return;
+                    }
+
+                    console.log("유저가 게임을 퇴장하였습니다. username=" + socket.username + ", game=" + socket.game);
+                });
+            }
+        );
     });
 
     socket.on('enter', function (data) {
-        console.log("[onEnter] username=" + socket.username);
-
         var id = data.id;
         var username = data.username;
 
@@ -26,16 +36,29 @@ function onGame(socket) {
         socket.username = username;
 
         socket.join(socket.game);
-        socket.broadcast
-            .to(socket.game)
+        socket.to(socket.game)
             .emit('hello', {
                 username: socket.username
             });
+
+        Game.findById(socket.game, function (err, game) {
+                if (err) {
+                    console.error("게임을 찾을 수 없습니다. id=" + socket.game, err);
+                    return;
+                }
+                game.participate(socket.username, function (err, game) {
+                    if (err) {
+                        console.error("게임 참가를 실패하였습니다.", err);
+                        return;
+                    }
+
+                    console.log("새 유저가 게임에 참가하였습니다. username=" + socket.username + ", game=" + socket.game);
+                });
+            }
+        );
     });
 
     socket.on('players', function () {
-        console.log("[onPlayers] username=" + socket.username);
-
         game.in(socket.game)
             .clients(function (err, clients) {
                 if (err) {
@@ -85,8 +108,8 @@ module.exports = function (server) {
     lobby = io.of('/lobby');
     lobby.on('connection', onLobby);
 
-    Game.schema.statics.onCreate = function (game) {
-        lobby.emit('game-new', game);
+    Game.schema.statics.onSave = function (game) {
+        lobby.emit('game-save', game);
     };
     Game.schema.statics.onRemove = function (game) {
         lobby.emit('game-remove', game);
