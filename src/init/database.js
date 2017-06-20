@@ -1,5 +1,4 @@
 var mariadb = require('../database/mariadb');
-var Game = require('../database/game');
 
 module.exports = function (config) {
     mariadb.createPool(config.mariadb, function (err) {
@@ -10,5 +9,4 @@ module.exports = function (config) {
         console.log("MariaDB connection pool is created");
         console.log("MariaDB is initialized.");
     });
-    Game.setup(config.mongodb);
 };

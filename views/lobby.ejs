@@ -95,9 +95,8 @@
 <% include common/js.ejs %>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    function gameToHtml(game) {
-        var html = '<a id="game-' + game._id + '" href="/game/' + game._id + '" class="list-group-item">';
-        html += '<div class="container">';
+    function getGameContentsHtml(game) {
+        var html = '<div class="container">';
         html += '<div class="row">';
 
         html += '<div class="col-xs-2"><h3 class="text-center">';
@@ -116,7 +115,13 @@
         html += (game.size + ' / ' + game.capacity);
         html += '</h3></div>';
 
-        html += '</div></div></a>';
+        html += '</div></div>';
+        return html;
+    }
+
+    function getGameHtml(game) {
+        var html = '<a id="game-' + game._id + '" href="/game/' + game._id + '" class="list-group-item">';
+        html += getGameContentsHtml(game);
         return html;
     }
 
@@ -131,21 +136,28 @@
         $games.empty();
         var len = games.length;
         for (var i = 0; i < len; i++) {
-            $games.append(gameToHtml(games[i]));
+            $games.append(getGameHtml(games[i]));
         }
     });
-    socket.on('game-new', function (game) {
+    socket.on('game-save', function (game) {
         if (!game) {
             return;
         }
 
-        $('#games').append(gameToHtml(game));
+        var $game = $('#game-' + game._id);
+        if ($game.length) {
+            $game.empty();
+            $game.append(getGameContentsHtml(game));
+        } else {
+            $('#games').append(getGameHtml(game));
+        }
     });
     socket.on('game-remove', function (game) {
         if (!game) {
             return;
         }
 
+        $('#game-' + game._id).remove();
     });
 
     socket.emit('games');
